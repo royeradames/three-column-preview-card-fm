@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --canvas: #f2f2f2;
+  --gold: #e28625;
+  --cyan: #006971;
+  --green: #004140;
+  --heading: #f2f2f2;
+  --copy: hsl(0 0% 100% / .75);
+  --footer: hsl(184 100% 22%);
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body { margin: 0; background: var(--canvas); color: var(--green); font-family: var(--font-lexend-deca), sans-serif; }
+a { color: inherit; text-underline-offset: .2em; }
+:focus-visible { outline: 3px solid var(--green); outline-offset: 4px; }
+
+main { min-height: calc(100svh - 4.5rem); display: grid; place-items: center; padding: 5.5rem 1.5rem 3rem; }
+.columns { display: flex; flex-direction: column; width: min(100%, 38rem); border-radius: .5rem; overflow: hidden; }
+.column { --accent: var(--gold); display: flex; flex-direction: column; align-items: flex-start; padding: 3rem; background: var(--accent); }
+.column-suvs { --accent: var(--cyan); }
+.column-luxury { --accent: var(--green); }
+.column img { display: block; margin-bottom: 2rem; }
+h2 { margin: 0 0 1.5rem; color: var(--heading); font-family: var(--font-big-shoulders), sans-serif; font-size: 2.5rem; font-weight: 700; font-variation-settings: "opsz" 72; line-height: 1.2; text-transform: uppercase; }
+.copy { margin: 0 0 1.5rem; color: var(--copy); font-size: 1rem; line-height: 1.5625rem; }
+
+/* Figma Button: 147×48 pill, gray-100 fill and column-colored label; active state inverts to an outline. */
+.learn-more summary { display: inline-flex; align-items: center; justify-content: center; min-width: 9.1875rem; min-height: 3rem; padding: .5rem 2rem; border: 2px solid var(--heading); border-radius: 1.5625rem; background: var(--heading); color: var(--accent); cursor: pointer; font-size: 1rem; line-height: 1.5625rem; list-style: none; }
+.learn-more summary::-webkit-details-marker { display: none; }
+.learn-more summary:hover, .learn-more summary:focus-visible, .learn-more[open] summary { background: transparent; color: var(--heading); }
+.learn-more summary:focus-visible { outline-color: var(--heading); }
+.demo-note { max-width: 20rem; margin: 1rem 0 0; color: var(--heading); font-size: 1rem; line-height: 1.5; }
+
+footer { padding: 0 1.5rem 1.5rem; color: var(--footer); font-size: 1rem; line-height: 1.5; text-align: center; }
+footer a { display: inline-block; min-height: 2.75rem; padding-block: .625rem; color: var(--green); font-weight: 400; }
+footer a:hover { color: var(--gold); }
+.site-name { color: var(--green); }
+
+/* Tablet frame: 608px stack, 80px side padding. */
+@media (min-width: 40rem) {
+  .column { padding: 3rem 5rem; }
+}
+
+/* Desktop frame: three 307×500 columns, button pinned to the bottom. */
+@media (min-width: 64rem) {
+  main { padding-block: 3rem; }
+  .columns { flex-direction: row; width: min(100%, 57.5625rem); }
+  .column { flex: 1 1 0; min-width: 0; min-height: 31.25rem; padding: 3rem; }
+  .column img { margin-bottom: 2.5rem; }
+  .copy { margin-bottom: 5rem; }
+  .learn-more { margin-top: auto; }
+}
+@media (prefers-reduced-motion: no-preference) { .learn-more summary { transition: background-color .15s, color .15s; } }
