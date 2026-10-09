@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const categories = [
-  { name: "Sedans", color: "rgb(226, 134, 37)", copy: "Choose a sedan for its affordability and excellent fuel economy. Ideal for cruising in the city or on your next road trip." },
+  { name: "Sedans", color: "rgb(162, 88, 22)", copy: "Choose a sedan for its affordability and excellent fuel economy. Ideal for cruising in the city or on your next road trip." },
   { name: "SUVs", color: "rgb(0, 105, 113)", copy: "Take an SUV for its spacious interior, power, and versatility. Perfect for your next family vacation and off-road adventures." },
   { name: "Luxury", color: "rgb(0, 65, 64)", copy: "Cruise in the best car brands without the bloated prices. Enjoy the enhanced comfort of a luxury rental and arrive in style." },
 ];

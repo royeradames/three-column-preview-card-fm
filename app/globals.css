@@ -2,11 +2,11 @@
 
 :root {
   --canvas: #f2f2f2;
-  --gold: #e28625;
+  --gold: #a25816;
   --cyan: #006971;
   --green: #004140;
   --heading: #f2f2f2;
-  --copy: hsl(0 0% 100% / .75);
+  --copy: hsl(0 0% 100% / .9);
   --footer: hsl(184 100% 22%);
 }
 * { box-sizing: border-box; }
@@ -50,4 +50,3 @@ footer a:hover { color: var(--gold); }
   .copy { margin-bottom: 5rem; }
   .learn-more { margin-top: auto; }
 }
-@media (prefers-reduced-motion: no-preference) { .learn-more summary { transition: background-color .15s, color .15s; } }
