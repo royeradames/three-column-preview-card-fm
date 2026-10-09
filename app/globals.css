@@ -50,4 +50,3 @@ footer a:hover { color: var(--gold); }
   .copy { margin-bottom: 5rem; }
   .learn-more { margin-top: auto; }
 }
-@media (prefers-reduced-motion: no-preference) { .learn-more summary { transition: background-color .15s, color .15s; } }

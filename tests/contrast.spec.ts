@@ -56,3 +56,44 @@ test("column text and real Learn More states meet contrast", async ({ page }) =>
     expect.soft(footer.ratio, `footer hover at ${width}: ${JSON.stringify(footer)}`).toBeGreaterThanOrEqual(footer.minimum);
   }
 });
+
+test("Learn More hover contrast remains readable during its transition", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  for (const summary of await page.locator("summary").all()) {
+    await summary.hover();
+    const samples = await summary.evaluate(async element => {
+      const parse = (color: string) => {
+        const channels = color.match(/[\d.]+/g)?.map(Number);
+        if (!channels || channels.length < 3) throw new Error(`Unsupported computed color ${color}`);
+        return channels;
+      };
+      const luminance = (channels: number[]) => {
+        const linear = channels.map(channel => {
+          const value = channel / 255;
+          return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+      };
+      const column = element.closest(".column");
+      if (!column) throw new Error("Missing column surface");
+      const surface = parse(getComputedStyle(column).backgroundColor);
+      const samples: { foreground: string; background: string; ratio: number }[] = [];
+      const started = performance.now();
+      while (performance.now() - started < 220) {
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        const style = getComputedStyle(element);
+        const fill = parse(style.backgroundColor);
+        const alpha = fill[3] ?? 1;
+        const paintedBackground = fill.slice(0, 3).map((value, index) => value * alpha + surface[index] * (1 - alpha));
+        const foreground = luminance(parse(style.color).slice(0, 3));
+        const background = luminance(paintedBackground);
+        samples.push({ foreground: style.color, background: style.backgroundColor, ratio: (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05) });
+      }
+      return samples;
+    });
+    expect(samples.length).toBeGreaterThan(1);
+    expect.soft(samples.filter(sample => sample.ratio < 4.5), JSON.stringify(samples)).toEqual([]);
+  }
+});

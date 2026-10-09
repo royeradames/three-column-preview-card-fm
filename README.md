@@ -19,3 +19,4 @@ Original challenge files are preserved under `reference/`; supplied images moved
 - The page has a visually hidden `h1` ("Car rental categories") so each column can be a labelled `h2` region.
 
 - The orange token is a darker shade of the supplied orange, and translucent copy uses 90% white. Large headings meet 3:1; copy, button labels, active disclosure notes and footer hover meet 4.5:1 against their rendered surfaces. The contrast regression composites translucent copy against its actual column.
+- Disclosure text and background change together without color interpolation, so the label remains readable throughout hover and focus changes. An animation-frame regression measures the actual rendered hover transition.
