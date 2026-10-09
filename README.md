@@ -17,3 +17,5 @@ Original challenge files are preserved under `reference/`; supplied images moved
 - "Learn More" has no destination in the challenge. Rather than a dead link, each one is a native disclosure styled as the Figma pill. It opens a visible "Demo only" note, works by keyboard and without JavaScript, and shows the Desktop - Active outline state on hover, focus and while open.
 - Body copy and button labels rise from the design's 15px to the family 16px floor, so desktop columns can grow slightly past 500px.
 - The page has a visually hidden `h1` ("Car rental categories") so each column can be a labelled `h2` region.
+
+- The orange token is a darker shade of the supplied orange, and translucent copy uses 90% white. Large headings meet 3:1; copy, button labels, active disclosure notes and footer hover meet 4.5:1 against their rendered surfaces. The contrast regression composites translucent copy against its actual column.
