@@ -1,0 +1,158 @@
+{
+  "_about": "royer-merge change-scoped checks for three-column-preview-card-fm (affected-checks.mjs reads a repo-root .affected-checks.json before the toolbox's file). Checks with \"boat\": true run on a boat box through run-checks.mjs. Added Oct 28, 2026 (bottleneck rollout).",
+  "profiles": {
+    "three-column-preview-card-fm": {
+      "remote": "three-column-preview-card-fm",
+      "docs": [
+        "**/*.md",
+        "**/*.MD",
+        "**/*.txt",
+        "docs/**",
+        "reference/**",
+        "artwork/**",
+        ".gitignore"
+      ],
+      "instructions": [
+        "AGENTS.md",
+        "**/AGENTS.md",
+        "CLAUDE.md",
+        ".cursor/rules/**",
+        ".affected-checks.json"
+      ],
+      "global": [
+        "package.json",
+        "package-lock.json",
+        "bun.lock",
+        "bunfig.toml",
+        ".npmrc",
+        "tsconfig.json",
+        "next.config.ts",
+        "next-env.d.ts",
+        "eslint.config.mjs",
+        "postcss.config.mjs",
+        "playwright.config.ts",
+        "vercel.json",
+        ".github/**",
+        "app/layout.tsx",
+        "app/globals.css",
+        "proxy.ts",
+        "middleware.ts"
+      ],
+      "checks": [
+        {
+          "name": "typecheck",
+          "what": "tsc --noEmit",
+          "lane": "light",
+          "independent": true,
+          "boat": true,
+          "cmd": "./node_modules/.bin/tsc --noEmit",
+          "when": [
+            "**/*.ts",
+            "**/*.tsx",
+            "**/*.mts"
+          ]
+        },
+        {
+          "name": "lint",
+          "what": "eslint . (the package.json lint script)",
+          "lane": "light",
+          "independent": true,
+          "boat": true,
+          "cmd": "./node_modules/.bin/eslint .",
+          "when": [
+            "**/*.ts",
+            "**/*.tsx",
+            "**/*.mts",
+            "**/*.js",
+            "**/*.mjs",
+            "**/*.cjs",
+            "**/*.jsx"
+          ]
+        },
+        {
+          "name": "build",
+          "what": "next build",
+          "lane": "heavy",
+          "independent": true,
+          "boat": true,
+          "anyCode": true,
+          "cmd": "./node_modules/.bin/next build",
+          "when": [
+            "app/**",
+            "lib/**",
+            "components/**",
+            "public/**"
+          ]
+        },
+        {
+          "name": "specs",
+          "what": "the Playwright suite against next start (it builds first)",
+          "lane": "heavy",
+          "independent": true,
+          "cmd": "./node_modules/.bin/next build && ./node_modules/.bin/playwright test",
+          "boat": true,
+          "_boat": "The boat box image ships Google Chrome at /usr/bin/google-chrome, which the config's channel chrome uses.",
+          "when": [
+            "app/**",
+            "lib/**",
+            "components/**",
+            "public/**",
+            "tests/**"
+          ]
+        },
+        {
+          "name": "ui-quality-gate",
+          "aliases": [
+            "quality-gate"
+          ],
+          "what": "the UI quality gate on the pages the diff reaches, at promotion only; this repo ships main at merge, so it is the QA-at-promotion list's route source",
+          "routes": true,
+          "at": "promotion",
+          "when": [
+            "app/**",
+            "lib/**",
+            "components/**",
+            "public/**"
+          ]
+        },
+        {
+          "name": "qa",
+          "what": "independent royer-qa on the PR's own surface",
+          "at": "promotion",
+          "routes": true,
+          "when": [
+            "app/**",
+            "lib/**",
+            "components/**",
+            "public/**"
+          ],
+          "instructionsToo": true
+        },
+        {
+          "name": "qa-gate",
+          "what": "QA at the head before merge (auth, payments, secrets, deploy config)",
+          "carryAs": "qa",
+          "gate": [
+            "vercel.json",
+            ".env*",
+            "**/.env*",
+            "setup.json",
+            ".github/workflows/**",
+            "middleware.*",
+            "proxy.*",
+            "app/api/**",
+            "src/middleware.*",
+            "src/proxy.*"
+          ]
+        }
+      ],
+      "setup": "[ -d node_modules ] || if [ -f bun.lock ]; then b=\"${BUN:-$HOME/.bun/bin/bun}\"; [ -x \"$b\" ] || b=$(command -v bun) || { echo 'setup: bun.lock but no bun (set BUN or install ~/.bun/bin/bun)' >&2; exit 1; }; NPM_CONFIG_USERCONFIG=/dev/null \"$b\" install --frozen-lockfile > /dev/null; else npm install --no-audit --no-fund > /dev/null 2>&1; fi",
+      "_setup": "Bun is this repo's package manager (Royer's pick, Oct 27, 2026, applied here Oct 28). A checkout with bun.lock installs with bun install --frozen-lockfile, bun found at $BUN, ~/.bun/bin/bun (not on PATH in non-interactive shells) or PATH. It ignores ~/.npmrc (NPM_CONFIG_USERCONFIG=/dev/null): Bun 1.4.4 refuses to install at all when that file holds a credential it can't parse, as Mac1's PPL Azure _password entry is (PR 252 QA, Oct 27, 2026), and this repo's packages all come from the public registry; a project .npmrc still applies. Its stderr stays in the stage log. An older branch without bun.lock keeps npm install. The checks call ./node_modules/.bin/<tool>, which either installer writes, and never pass --bun, so tsc, eslint and vitest keep running on Node through their #!/usr/bin/env node shebangs.",
+      "setupWhenMissing": "node_modules",
+      "boat": {
+        "setup": "v=$(node -p \"((require('./package.json').packageManager || '').match(/^bun@(.+)$/) || [])[1] || ''\"); [ -z \"$v\" ] || npm i -g \"bun@$v\" > /dev/null 2>&1; hash -r",
+        "_setup": "A boat box ships Bun 1.3.14, which can't read bun.lock, so it installs the packageManager's Bun first (a few seconds)."
+      }
+    }
+  }
+}
