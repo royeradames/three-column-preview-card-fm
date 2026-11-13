@@ -106,7 +106,7 @@ test("disclosures work with JavaScript disabled and nothing is sent", async ({ b
   const writes: string[] = [];
   page.on("request", request => { if (request.method() !== "GET") writes.push(request.url()); });
   try {
-    await page.goto("http://127.0.0.1:4538/");
+    await page.goto("http://127.0.0.1:4583/");
     await page.getByRole("region", { name: "Luxury" }).locator("summary").click();
     await expect(page.getByText("Demo only: this practice card has no luxury car listings or booking behind it.")).toBeVisible();
     expect(writes).toEqual([]);
